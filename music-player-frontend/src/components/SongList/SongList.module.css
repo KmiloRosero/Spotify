@@ -1,0 +1,330 @@
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.albumSection {
+  margin-bottom: 18px;
+}
+
+.albumHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.albumTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 900;
+}
+
+.albumSubtitle {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.albumGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.albumCard {
+  text-align: left;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--bg-highlight);
+  border-radius: var(--border-radius-lg);
+  padding: 12px;
+  color: var(--text-primary);
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.albumCard:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  transform: translateY(-2px);
+}
+
+.albumCover {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
+  background-size: cover;
+  background-position: center;
+  margin-bottom: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.albumName {
+  font-weight: 900;
+  font-size: var(--font-size-md);
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.albumArtist {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+.addButton {
+  background-color: var(--color-primary);
+  color: #0b0b0b;
+  padding: 10px 14px;
+  border-radius: var(--border-radius-full);
+  font-weight: 900;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.addButton:hover {
+  background-color: var(--color-primary-hover);
+  transform: scale(1.03);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tableHeader {
+  color: var(--text-muted);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--bg-highlight);
+}
+
+.th {
+  text-align: left;
+  padding: 10px 12px;
+}
+
+.thRight {
+  text-align: right;
+}
+
+.tbodyRow {
+  border-bottom: 1px solid rgba(36, 36, 36, 0.6);
+}
+
+.emptyState {
+  margin-top: 28px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--bg-highlight);
+  border-radius: var(--border-radius-lg);
+  padding: 28px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 10px;
+}
+
+.emptyTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 900;
+}
+
+.emptySubtitle {
+  color: var(--text-secondary);
+}
+
+.emptyPlus {
+  margin-top: 10px;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--border-radius-full);
+  background-color: var(--color-primary);
+  color: #0b0b0b;
+  font-size: 28px;
+  font-weight: 900;
+  transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.emptyPlus:hover {
+  background-color: var(--color-primary-hover);
+  transform: scale(1.05);
+}
+
+.skeletonRow {
+  padding: 14px 12px;
+}
+
+.skeletonBar {
+  height: 12px;
+  border-radius: var(--border-radius-full);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.itemButton {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 56px 1fr 220px 90px 120px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--border-radius-sm);
+  background-color: transparent;
+  transition: background-color var(--transition-fast);
+  cursor: pointer;
+}
+
+.itemButton:hover {
+  background-color: var(--bg-highlight);
+}
+
+.itemButton[data-active='true'] {
+  background-color: rgba(245, 166, 35, 0.08);
+  border-left: 3px solid var(--color-primary);
+  padding-left: 9px;
+}
+
+.leftCell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  padding-left: 6px;
+}
+
+.itemLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.itemTitle {
+  font-weight: 900;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.itemTitleActive {
+  color: var(--color-primary);
+}
+
+.itemArtist {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.artistCell {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.itemDuration {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  text-align: right;
+}
+
+.actionsCell {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.removeButton {
+  color: var(--color-danger);
+  opacity: 0;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: var(--border-radius-full);
+}
+
+.itemButton:hover .removeButton {
+  opacity: 1;
+}
+
+.removeButton:hover {
+  transform: scale(1.03);
+  background-color: rgba(226, 33, 52, 0.12);
+}
+
+.equalizer {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.bar {
+  width: 3px;
+  height: 10px;
+  background-color: var(--color-primary);
+  border-radius: var(--border-radius-full);
+  animation: bounce 0.9s infinite ease-in-out;
+}
+
+.bar:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.bar:nth-child(3) {
+  animation-delay: 0.24s;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    height: 6px;
+    opacity: 0.7;
+  }
+  50% {
+    height: 14px;
+    opacity: 1;
+  }
+}

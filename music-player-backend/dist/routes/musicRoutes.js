@@ -1,0 +1,17 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const MusicController_1 = require("../controllers/MusicController");
+const router = (0, express_1.Router)();
+router.post('/song', MusicController_1.MusicController.addSong);
+router.delete('/song/:id', MusicController_1.MusicController.removeSong);
+router.get('/playlist', MusicController_1.MusicController.getPlaylist);
+router.get('/current', MusicController_1.MusicController.getCurrentSong);
+router.post('/current', MusicController_1.MusicController.setCurrentSong);
+router.post('/play', MusicController_1.MusicController.play);
+router.post('/pause', MusicController_1.MusicController.pause);
+router.post('/stop', MusicController_1.MusicController.stop);
+router.post('/next', MusicController_1.MusicController.next);
+router.post('/previous', MusicController_1.MusicController.previous);
+router.get('/history', MusicController_1.MusicController.getHistory);
+exports.default = router;

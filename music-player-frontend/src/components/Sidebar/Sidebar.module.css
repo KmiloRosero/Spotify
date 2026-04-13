@@ -1,0 +1,96 @@
+.container {
+  height: 100%;
+  background-color: var(--bg-elevated);
+  border-right: 1px solid var(--bg-highlight);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 6px;
+}
+
+.logoIcon {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--border-radius-full);
+  background: rgba(245, 166, 35, 0.15);
+  color: var(--color-primary);
+  font-weight: 900;
+}
+
+.logoText {
+  color: var(--color-primary);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.navLink {
+  width: 100%;
+  text-align: left;
+  padding: 12px 12px;
+  border-radius: var(--border-radius-md);
+  color: var(--text-secondary);
+  background-color: transparent;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+}
+
+.navLink:hover {
+  background-color: var(--bg-highlight);
+  color: var(--text-primary);
+}
+
+.activeLink {
+  background-color: var(--bg-highlight);
+  color: var(--color-primary);
+}
+
+.actions {
+  margin-top: auto;
+}
+
+.createButton {
+  width: 100%;
+  background-color: var(--bg-highlight);
+  color: var(--text-primary);
+  padding: 12px 14px;
+  border-radius: var(--border-radius-md);
+  font-weight: 800;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.createButton:hover {
+  background-color: var(--bg-hover);
+  color: var(--color-primary);
+}
+
+.navIcon {
+  width: 18px;
+  display: inline-grid;
+  place-items: center;
+}
+
+.footer {
+  color: var(--text-muted);
+  font-size: var(--font-size-xs);
+  line-height: 1.4;
+  padding: 6px 6px 2px;
+}

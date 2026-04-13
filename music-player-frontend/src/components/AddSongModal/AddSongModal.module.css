@@ -1,0 +1,99 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 1000;
+}
+
+.modal {
+  width: 480px;
+  max-width: calc(100vw - 32px);
+  background-color: var(--bg-card);
+  border: 1px solid var(--bg-highlight);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-modal);
+  padding: 32px;
+}
+
+.title {
+  font-size: var(--font-size-xl);
+  font-weight: 900;
+  margin-bottom: 16px;
+}
+
+.form {
+  display: grid;
+  gap: 12px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.label {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.input {
+  width: 100%;
+  background-color: var(--bg-highlight);
+  border: 1px solid var(--bg-hover);
+  color: var(--text-primary);
+  border-radius: var(--border-radius-md);
+  padding: 12px;
+}
+
+.input:focus {
+  border-color: var(--color-primary);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.cancelButton {
+  border: 1px solid var(--bg-hover);
+  color: var(--text-secondary);
+  padding: 10px 14px;
+  border-radius: var(--border-radius-full);
+  background-color: transparent;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.cancelButton:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.submitButton {
+  background-color: var(--color-primary);
+  color: #000000;
+  padding: 10px 14px;
+  border-radius: var(--border-radius-full);
+  font-weight: 700;
+  transition: background-color var(--transition-fast);
+}
+
+.submitButton:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.errorText {
+  color: var(--color-danger);
+  font-size: var(--font-size-xs);
+}
+
+.specificRow {
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+}
