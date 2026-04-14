@@ -1,7 +1,9 @@
 import type { PlayerState, PlayerStatus, PlaylistResponse } from '../types/PlayerState';
 import type { Song, SongDTO } from '../types/Song';
 
-const BASE_URL = '/api/music';
+const BASE_URL =
+  (import.meta as unknown as { env?: { VITE_API_BASE_URL?: string } }).env?.VITE_API_BASE_URL ??
+  'https://spotify-backend-pvew.onrender.com/api/music';
 
 type ApiSuccess<T> = { success: true; data: T; message: string };
 type ApiError = { success: false; error: string; message: string };
