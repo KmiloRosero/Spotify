@@ -12,6 +12,15 @@ const PORT = process.env.PORT || 3001;
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 
+// Ruta de prueba
+app.get('/', (req, res) => {
+  res.json({
+    message: '✅ Backend de Spotify funcionando correctamente',
+    status: 'OK',
+    time: new Date(),
+  });
+});
+
 // Servir la carpeta de audios
 app.use('/audio', express.static(path.join(__dirname, '../public/audio')));
 app.use('/covers', express.static(path.join(__dirname, '../public/covers')));
