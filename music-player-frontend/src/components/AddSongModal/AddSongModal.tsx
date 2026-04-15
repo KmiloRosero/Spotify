@@ -1,22 +1,29 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { SongDTO } from '../../types/Song';
+import type { Song, SongDTO } from '../../types/Song';
 import styles from './AddSongModal.module.css';
 
 type Props = {
   onClose: () => void;
   onSubmit: (dto: SongDTO) => Promise<void> | void;
+  onSubmitLocal?: (song: Song) => Promise<void> | void;
   totalSongs: number;
 };
 
 type PositionMode = 'end' | 'start' | 'specific';
 
-export function AddSongModal({ onClose, onSubmit, totalSongs }: Props) {
+function filenameWithoutExtension(filename: string): string {
+  const idx = filename.lastIndexOf('.');
+  return idx > 0 ? filename.slice(0, idx) : filename;
+}
+
+export function AddSongModal({ onClose, onSubmit, onSubmitLocal, totalSongs }: Props) {
   const [title, setTitle] = useState<string>('');
   const [artist, setArtist] = useState<string>('');
   const [duration, setDuration] = useState<string>('');
   const [positionMode, setPositionMode] = useState<PositionMode>('end');
   const [specificPosition, setSpecificPosition] = useState<string>('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [localAudioUrl, setLocalAudioUrl] = useState<string>('');
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -25,6 +32,12 @@ export function AddSongModal({ onClose, onSubmit, totalSongs }: Props) {
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [onClose]);
+
+  useEffect(() => {
+    return () => {
+      if (localAudioUrl) URL.revokeObjectURL(localAudioUrl);
+    };
+  }, [localAudioUrl]);
 
   const dto = useMemo<SongDTO>(() => {
     const parsedDuration = Number(duration);
@@ -46,6 +59,18 @@ export function AddSongModal({ onClose, onSubmit, totalSongs }: Props) {
   }, [title, artist, duration, positionMode, specificPosition]);
 
   const validate = (): boolean => {
+    if (localAudioUrl && onSubmitLocal) {
+      const parsedDuration = Number(duration);
+      const nextErrors: Record<string, string> = {};
+      if (!title.trim()) nextErrors.title = 'El título es obligatorio';
+      if (!artist.trim()) nextErrors.artist = 'El artista es obligatorio';
+      if (!Number.isFinite(parsedDuration) || parsedDuration <= 0) {
+        nextErrors.duration = 'La duración debe ser mayor a 0';
+      }
+      setErrors(nextErrors);
+      return Object.keys(nextErrors).length === 0;
+    }
+
     const nextErrors: Record<string, string> = {};
 
     if (!dto.title) nextErrors.title = 'El título es obligatorio';
@@ -87,11 +112,58 @@ export function AddSongModal({ onClose, onSubmit, totalSongs }: Props) {
           onSubmit={(e) => {
             e.preventDefault();
             if (!validate()) return;
+            if (localAudioUrl && onSubmitLocal) {
+              const parsedDuration = Number(duration);
+              const localSong: Song = {
+                id: -Date.now(),
+                title: title.trim(),
+                artist: artist.trim(),
+                duration: Number.isFinite(parsedDuration) ? parsedDuration : 0,
+                audioUrl: localAudioUrl,
+              };
+
+              Promise.resolve(onSubmitLocal(localSong))
+                .then(() => onClose())
+                .catch(() => {});
+              return;
+            }
+
             Promise.resolve(onSubmit(dto))
               .then(() => onClose())
               .catch(() => {});
           }}
         >
+          <div className={styles.field}>
+            <label className={styles.label} htmlFor="audioFile">
+              Canción desde tu PC (mp3)
+            </label>
+            <input
+              id="audioFile"
+              className={styles.input}
+              type="file"
+              accept="audio/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                if (localAudioUrl) URL.revokeObjectURL(localAudioUrl);
+                const objectUrl = URL.createObjectURL(file);
+                setLocalAudioUrl(objectUrl);
+
+                const name = filenameWithoutExtension(file.name);
+                if (!title.trim()) setTitle(name);
+                if (!artist.trim()) setArtist('Local');
+
+                const audio = new Audio();
+                audio.preload = 'metadata';
+                audio.src = objectUrl;
+                audio.onloadedmetadata = () => {
+                  const seconds = Math.max(1, Math.round(audio.duration));
+                  setDuration(String(seconds));
+                };
+              }}
+            />
+          </div>
+
           <div className={styles.field}>
             <label className={styles.label} htmlFor="title">
               Título de la canción
@@ -145,6 +217,7 @@ export function AddSongModal({ onClose, onSubmit, totalSongs }: Props) {
               className={styles.input}
               value={positionMode}
               onChange={(e) => setPositionMode(e.target.value as PositionMode)}
+              disabled={Boolean(localAudioUrl)}
             >
               <option value="end">Al final de la lista</option>
               <option value="start">Al inicio de la lista</option>
