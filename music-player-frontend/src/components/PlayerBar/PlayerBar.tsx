@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState, type ChangeEvent, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent, type CSSProperties, type RefObject } from 'react';
 import type { PlayerState } from '../../types/PlayerState';
 import styles from './PlayerBar.module.css';
 
 type Props = {
   playerState: PlayerState | null;
+  externalAudioRef?: RefObject<HTMLAudioElement>;
   onPlay: () => void;
   onPause: () => void;
   onStop: () => void;
@@ -23,13 +24,14 @@ function badgeText(status: PlayerState['status']): string {
   return 'DETENIDO';
 }
 
-export function PlayerBar({ playerState, onPlay, onPause, onStop, onNext, onPrevious }: Props) {
+export function PlayerBar({ playerState, externalAudioRef, onPlay, onPause, onStop, onNext, onPrevious }: Props) {
   const currentSong = playerState?.currentSong ?? null;
   const status = playerState?.status ?? 'STOPPED';
   const totalSongs = playerState?.totalSongs ?? 0;
   const isPlaying = status === 'PLAYING';
   
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const internalAudioRef = useRef<HTMLAudioElement>(null);
+  const audioRef = externalAudioRef ?? internalAudioRef;
   
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(currentSong?.duration ?? 0);
@@ -56,33 +58,33 @@ export function PlayerBar({ playerState, onPlay, onPause, onStop, onNext, onPrev
         ? styles.statusPaused
         : styles.statusStopped;
 
-  // Sincronizar estado de reproducción
   useEffect(() => {
-    if (!audioRef.current) return;
+    const el = audioRef.current;
+    if (!el) return;
 
-    if (isPlaying) {
-      audioRef.current
-        .play()
-        .then(() => setNeedsPlayClick(false))
-        .catch(() => setNeedsPlayClick(true));
-    } else {
-      audioRef.current.pause();
+    if (externalAudioRef) {
+      const onTimeUpdate = () => {
+        setCurrentTime(el.currentTime);
+      };
+      const onLoadedMetadata = () => {
+        setDuration(el.duration);
+      };
+      const onEnded = () => {
+        onNext();
+      };
+
+      el.addEventListener('timeupdate', onTimeUpdate);
+      el.addEventListener('loadedmetadata', onLoadedMetadata);
+      el.addEventListener('ended', onEnded);
+      return () => {
+        el.removeEventListener('timeupdate', onTimeUpdate);
+        el.removeEventListener('loadedmetadata', onLoadedMetadata);
+        el.removeEventListener('ended', onEnded);
+      };
     }
-  }, [isPlaying, currentSong]);
 
-  // Sincronizar estado de Stop
-  useEffect(() => {
-    if (status === 'STOPPED' && audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-    }
-  }, [status]);
-
-  // Sincronizar volumen
-  useEffect(() => {
-    if (!audioRef.current) return;
-    audioRef.current.volume = isMuted ? 0 : volume / 100;
-  }, [volume, isMuted]);
+    return;
+  }, [audioRef, externalAudioRef, onNext]);
 
   const handleTimeUpdate = () => {
     if (audioRef.current) {
@@ -97,8 +99,35 @@ export function PlayerBar({ playerState, onPlay, onPause, onStop, onNext, onPrev
   };
 
   const handleEnded = () => {
-    onNext(); // Auto-play siguiente
+    onNext();
   };
+
+  useEffect(() => {
+    if (!audioRef.current) return;
+
+    if (isPlaying) {
+      audioRef.current
+        .play()
+        .then(() => setNeedsPlayClick(false))
+        .catch(() => setNeedsPlayClick(true));
+    } else {
+      audioRef.current.pause();
+    }
+  }, [audioRef, isPlaying, currentSong]);
+
+  // Sincronizar estado de Stop
+  useEffect(() => {
+    if (status === 'STOPPED' && audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  }, [audioRef, status]);
+
+  // Sincronizar volumen
+  useEffect(() => {
+    if (!audioRef.current) return;
+    audioRef.current.volume = isMuted ? 0 : volume / 100;
+  }, [audioRef, volume, isMuted]);
 
   const handleSeekChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const value = Number(e.target.value);
@@ -134,9 +163,9 @@ export function PlayerBar({ playerState, onPlay, onPause, onStop, onNext, onPrev
 
   return (
     <div className={styles.container}>
-      {currentSong && currentSong.audioUrl && (
+      {!externalAudioRef && currentSong && currentSong.audioUrl && (
         <audio
-          ref={audioRef}
+          ref={internalAudioRef}
           src={currentSong.audioUrl}
           onTimeUpdate={handleTimeUpdate}
           onLoadedMetadata={handleLoadedMetadata}

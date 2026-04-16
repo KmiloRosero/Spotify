@@ -34,12 +34,6 @@ export function AddSongModal({ onClose, onSubmit, onSubmitLocal, totalSongs }: P
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [onClose]);
 
-  useEffect(() => {
-    return () => {
-      if (localAudioUrl) URL.revokeObjectURL(localAudioUrl);
-    };
-  }, [localAudioUrl]);
-
   const dto = useMemo<SongDTO>(() => {
     const parsedDuration = Number(duration);
     const position =

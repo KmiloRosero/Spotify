@@ -17,7 +17,7 @@ app.use(express_1.default.json());
 // Ruta de prueba
 app.get('/', (req, res) => {
     res.json({
-        message: '✅ Backend de Spotify funcionando correctamente',
+        message: '✅ Backend de Kmusic funcionando correctamente',
         status: 'OK',
         time: new Date(),
     });
@@ -27,7 +27,7 @@ app.use('/audio', express_1.default.static(path_1.default.join(__dirname, '../pu
 app.use('/covers', express_1.default.static(path_1.default.join(__dirname, '../public/covers')));
 app.use('/api/music', musicRoutes_1.default);
 app.get('/health', (_req, res) => {
-    res.json({ success: true, message: 'Music Player API is running' });
+    res.json({ success: true, message: 'Kmusic API is running' });
 });
 const songService = new SongService_1.SongService();
 const playlistService = new PlaylistService_1.PlaylistService();
@@ -77,6 +77,6 @@ for (const seed of seedSongs) {
 playlistService.resetCurrent();
 app.use(errorHandler_1.errorHandler);
 app.listen(PORT, () => {
-    process.stdout.write(`Music Player API running on http://localhost:${PORT}\n`);
+    process.stdout.write(`Kmusic API running on http://localhost:${PORT}\n`);
 });
 exports.default = app;

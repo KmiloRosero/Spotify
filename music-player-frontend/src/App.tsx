@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { AddSongModal } from './components/AddSongModal/AddSongModal';
 import { HistoryPanel } from './components/HistoryPanel/HistoryPanel';
 import { PlayerBar } from './components/PlayerBar/PlayerBar';
@@ -14,6 +14,8 @@ import styles from './App.module.css';
 
 function App() {
   const { showSuccess, showError, toasts, removeToast } = useToast();
+
+  const sharedAudioRef = useRef<HTMLAudioElement>(null);
 
   const { playlist, isLoading, refresh, handleAddSong, handleRemoveSong, handleSetCurrent } =
     usePlaylist(showSuccess, showError);
@@ -197,6 +199,7 @@ function App() {
       <div className={styles.playerBarArea}>
         <PlayerBar
           playerState={effectivePlayerState}
+          externalAudioRef={sharedAudioRef}
           onPlay={() => {
             void handlePlayUnified();
           }}
@@ -223,6 +226,13 @@ function App() {
             await handleSetCurrentUnified(created.id);
           }}
           onSubmitLocal={(song) => {
+            const audio = sharedAudioRef.current;
+            if (audio && song.audioUrl) {
+              audio.src = song.audioUrl;
+              audio.currentTime = 0;
+              audio.volume = 0.8;
+              void audio.play().catch(() => {});
+            }
             setLocalSongs((prev) => [...prev, song]);
             setLocalCurrentSongId(song.id);
             setLocalStatus('PLAYING');
@@ -232,6 +242,13 @@ function App() {
           totalSongs={playlist?.total ?? 0}
         />
       ) : null}
+
+      <audio
+        ref={sharedAudioRef}
+        src={effectivePlayerState?.currentSong?.audioUrl ?? undefined}
+        preload="metadata"
+        style={{ display: 'none' }}
+      />
 
       <Toast toasts={toasts} onRemove={removeToast} />
     </div>
