@@ -24,6 +24,7 @@ export function AddSongModal({ onClose, onSubmit, onSubmitLocal, totalSongs }: P
   const [specificPosition, setSpecificPosition] = useState<string>('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [localAudioUrl, setLocalAudioUrl] = useState<string>('');
+  const [audioUrl, setAudioUrl] = useState<string>('');
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -55,8 +56,9 @@ export function AddSongModal({ onClose, onSubmit, onSubmitLocal, totalSongs }: P
       artist: artist.trim(),
       duration: Number.isFinite(parsedDuration) ? parsedDuration : 0,
       position,
+      audioUrl: audioUrl.trim().length ? audioUrl.trim() : undefined,
     };
-  }, [title, artist, duration, positionMode, specificPosition]);
+  }, [title, artist, duration, positionMode, specificPosition, audioUrl]);
 
   const validate = (): boolean => {
     if (localAudioUrl && onSubmitLocal) {
@@ -75,6 +77,7 @@ export function AddSongModal({ onClose, onSubmit, onSubmitLocal, totalSongs }: P
 
     if (!dto.title) nextErrors.title = 'El título es obligatorio';
     if (!dto.artist) nextErrors.artist = 'El artista es obligatorio';
+    if (!dto.audioUrl) nextErrors.audioUrl = 'Debes escoger un archivo o pegar una URL de audio';
 
     if (!Number.isFinite(dto.duration) || dto.duration <= 0) {
       nextErrors.duration = 'La duración debe ser mayor a 0';
@@ -163,6 +166,22 @@ export function AddSongModal({ onClose, onSubmit, onSubmitLocal, totalSongs }: P
               }}
             />
           </div>
+
+          {!localAudioUrl ? (
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="audioUrl">
+                URL de audio (mp3)
+              </label>
+              <input
+                id="audioUrl"
+                className={styles.input}
+                value={audioUrl}
+                onChange={(e) => setAudioUrl(e.target.value)}
+                placeholder="https://.../cancion.mp3"
+              />
+              {errors.audioUrl ? <div className={styles.errorText}>{errors.audioUrl}</div> : null}
+            </div>
+          ) : null}
 
           <div className={styles.field}>
             <label className={styles.label} htmlFor="title">

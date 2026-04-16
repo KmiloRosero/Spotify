@@ -15,7 +15,7 @@ export function Sidebar({ onAddSong, activeItem, onNavigate }: Props) {
         <span className={styles.logoIcon} aria-hidden="true">
           ♪
         </span>
-        <span className={styles.logoText}>MusicPlayer</span>
+        <span className={styles.logoText}>Kmusic</span>
       </div>
 
       <nav className={styles.nav}>

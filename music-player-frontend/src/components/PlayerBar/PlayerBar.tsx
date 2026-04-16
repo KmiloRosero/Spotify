@@ -35,6 +35,7 @@ export function PlayerBar({ playerState, onPlay, onPause, onStop, onNext, onPrev
   const [duration, setDuration] = useState<number>(currentSong?.duration ?? 0);
   const [volume, setVolume] = useState<number>(80);
   const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [needsPlayClick, setNeedsPlayClick] = useState<boolean>(false);
 
   const displayedTime = status === 'STOPPED' ? 0 : currentTime;
   const durationLabel = formatDuration(duration);
@@ -60,7 +61,10 @@ export function PlayerBar({ playerState, onPlay, onPause, onStop, onNext, onPrev
     if (!audioRef.current) return;
 
     if (isPlaying) {
-      audioRef.current.play().catch(err => console.log('Esperando interacción para reproducir:', err));
+      audioRef.current
+        .play()
+        .then(() => setNeedsPlayClick(false))
+        .catch(() => setNeedsPlayClick(true));
     } else {
       audioRef.current.pause();
     }
@@ -204,6 +208,12 @@ export function PlayerBar({ playerState, onPlay, onPause, onStop, onNext, onPrev
                 ⏹
               </button>
             </div>
+
+            {!currentSong.audioUrl ? (
+              <div className={styles.noSong}>Esta canción no tiene audio. Agrégala desde tu PC o pega una URL mp3.</div>
+            ) : needsPlayClick ? (
+              <div className={styles.noSong}>Toca ▶ para activar el sonido (el navegador bloqueó autoplay).</div>
+            ) : null}
 
             <div className={styles.progressRow}>
               <div>{formatDuration(displayedTime)}</div>

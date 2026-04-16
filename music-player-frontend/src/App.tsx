@@ -219,10 +219,14 @@ function App() {
         <AddSongModal
           onClose={() => setShowAddModal(false)}
           onSubmit={async (dto) => {
-            await handleAddSong(dto);
+            const created = await handleAddSong(dto);
+            await handleSetCurrentUnified(created.id);
           }}
           onSubmitLocal={(song) => {
             setLocalSongs((prev) => [...prev, song]);
+            setLocalCurrentSongId(song.id);
+            setLocalStatus('PLAYING');
+            void handleStop();
             showSuccess('Canción agregada correctamente');
           }}
           totalSongs={playlist?.total ?? 0}

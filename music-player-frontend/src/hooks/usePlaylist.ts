@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { addSong, fetchPlaylist, removeSong, setCurrentSong } from '../api/musicApi';
 import type { PlaylistResponse } from '../types/PlayerState';
-import type { SongDTO } from '../types/Song';
+import type { Song, SongDTO } from '../types/Song';
 
 interface UsePlaylistReturn {
   playlist: PlaylistResponse | null;
   isLoading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
-  handleAddSong: (dto: SongDTO) => Promise<void>;
+  handleAddSong: (dto: SongDTO) => Promise<Song>;
   handleRemoveSong: (id: number) => Promise<void>;
   handleSetCurrent: (id: number) => Promise<void>;
 }
@@ -41,13 +41,15 @@ export function usePlaylist(
       setIsLoading(true);
       setError(null);
       try {
-        await addSong(dto);
+        const created = await addSong(dto);
         await refresh();
         onSuccess('Canción agregada correctamente');
+        return created;
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Error al agregar la canción';
         setError(message);
         onError(message);
+        throw new Error(message);
       } finally {
         setIsLoading(false);
       }
